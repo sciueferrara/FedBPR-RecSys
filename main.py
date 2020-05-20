@@ -20,7 +20,6 @@ def main(args):
 
     exp_type = utils.create_file_prefix(args.positive_fraction, args.with_delta, args.fraction, args.sampler_size)
 
-    processing_strategy = ProcessingStrategy.MultiProcessing() if args.mp else ProcessingStrategy.SingleProcessing()
     send_strategy = SendStrategy.SendDelta() if args.with_delta else SendStrategy.SendVector()
 
     for dataset in args.datasets:
@@ -46,6 +45,12 @@ def main(args):
         train_interactions_size = sum([len(user_list) for user_list in train_user_lists])
         print('{} interactions considered for training'.format(train_interactions_size))
 
+        if args.pop:
+            most_popular_items = (args.pop, utils.get_popularity(train_user_lists))
+        else:
+            most_popular_items = None
+
+
         # Set parameters based on arguments
         if args.fraction == 0:
             round_modifier = int(train_interactions_size)
@@ -66,7 +71,7 @@ def main(args):
 
                 # Create server and clients
                 server_model = ServerModel(item_size, n_factors)
-                server = Server(server_model, lr, args.fraction, args.positive_fraction, processing_strategy, send_strategy)
+                server = Server(server_model, lr, args.fraction, args.positive_fraction, args.mp, send_strategy, most_popular_items)
                 clients = [Client(u, ClientModel(n_factors), triplet_samplers[u], train_user_lists[u],
                                   validation_user_lists[u], test_user_lists[u], sampler_size) for u in range(user_size)]
 
@@ -76,6 +81,9 @@ def main(args):
                         bar = IncrementalBar('Epoch ' + str(int(i / round_modifier + 1)), max=round_modifier)
                     bar.next()
                     server.train_model(clients)
+
+                    if (i + 1) % (args.step_every * round_modifier) == 0:
+                        server.new_step()
 
                     # Evaluation
                     if ((i + 1) % (args.eval_every * round_modifier)) == 0:
@@ -100,5 +108,7 @@ if __name__ == '__main__':
     parser.add_argument('--validation_size', help='Set a validation size, if needed', type=float, default=0)
     parser.add_argument('--eval_every', type=int, default=10)
     parser.add_argument('--mp', action='store_true', help='Use if you want to use multiprocessing (if fraction > 0)')
+    parser.add_argument('-pop', '--pop', type=int, help='Select the popularity variant (1, 2)')
+    parser.add_argument('--step_every', type=int)
     parsed_args = parser.parse_args()
     main(parsed_args)

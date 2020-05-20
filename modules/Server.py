@@ -1,16 +1,20 @@
 import random
+import multiprocessing
+from .Worker import Worker
 
 random.seed(43)
 
 
 class Server:
-    def __init__(self, model, lr, fraction, positive_fraction, processing_strategy, send_strategy):
-        self._processing_strategy = processing_strategy
+    def __init__(self, model, lr, fraction, positive_fraction, mp, send_strategy, most_popular_items):
+        self.mp = mp
         self._send_strategy = send_strategy
         self.model = model
         self.lr = lr
         self.fraction = fraction
         self.positive_fraction = positive_fraction
+        self.most_popular_items = most_popular_items
+        self.step = 0
 
     def select_clients(self, clients, fraction=0.1):
         if fraction == 0:
@@ -20,7 +24,7 @@ class Server:
         return idx
 
     def train_on_client(self, clients, i):
-        resulting_dic, resulting_bias = clients[i].train(self.lr, self.positive_fraction)
+        resulting_dic, resulting_bias = clients[i].train(self.lr, self.positive_fraction, self.most_popular_items, self.step)
         for k, v in resulting_dic.items():
             self.model.item_vecs[k] += self.lr * v
         for k, v in resulting_bias.items():
@@ -31,7 +35,23 @@ class Server:
         c_list = self.select_clients(clients, self.fraction)
         for i in c_list:
             self._send_strategy.send_item_vectors(clients, i, self.model)
-        self._processing_strategy.train_model(self, clients, c_list)
+
+        if not self.mp:
+            for i in c_list:
+                self.train_on_client(clients, i)
+        else:
+            #TODO: Multiprocessing is not working properly
+            tasks = multiprocessing.JoinableQueue()
+            num_workers = multiprocessing.cpu_count() - 1
+            workers = [Worker(tasks, self.train_on_client, clients) for _ in range(num_workers)]
+            for w in workers:
+                w.start()
+            for i in c_list:
+                tasks.put((clients, i))
+            for i in range(num_workers):
+                tasks.put(None)
+            tasks.join()
+
         for i in c_list:
             self._send_strategy.delete_item_vectors(clients, i)
         self._send_strategy.update_deltas(self.model, item_vecs_bak, item_bias_bak)
@@ -43,3 +63,8 @@ class Server:
             predictions.append(c.predict(max_k))
             self._send_strategy.delete_item_vectors(clients, i)
         return predictions
+
+    def new_step(self):
+        if self.step < 10:
+            self.step += 1
+            print("Portion changed")

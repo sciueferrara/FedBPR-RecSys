@@ -21,7 +21,7 @@ class Client:
 
         return prediction
 
-    def train(self, lr, positive_fraction):
+    def train(self, lr, positive_fraction, most_popular_items, step):
         bias_reg = 0
         user_reg = lr / 20
         positive_item_reg = lr / 20
@@ -29,6 +29,8 @@ class Client:
         resulting_dic = {}
         resulting_bias = {}
 
+        if most_popular_items:
+            self.train_set.set_selection_list(most_popular_items, step)
         for i, j in self.train_set.sample_user_triples():
             x_i = self.model.predict_one(i)
             x_j = self.model.predict_one(j)
