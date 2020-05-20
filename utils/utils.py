@@ -71,7 +71,7 @@ def split_train_test(user_list, test_size=0.2, validation_size=0) -> Tuple[list,
     return train_user_list, validation_user_list, test_user_list
 
 
-def create_file_prefix(positive_fraction, with_delta, fraction, sampler_size):
+def create_file_prefix(positive_fraction, with_delta, fraction, sampler_size, pop):
     if positive_fraction:
         string = 'FedBPRPlus' + str(positive_fraction)
     else:
@@ -80,6 +80,8 @@ def create_file_prefix(positive_fraction, with_delta, fraction, sampler_size):
         else:
             string = 'FedBPRMinus'
     string += '-Frac' + str(fraction) + '-Samp' + sampler_size
+    if pop:
+        string += '-Pop' + str(pop)
     return string
 
 

@@ -18,7 +18,7 @@ def main(args):
     if not os.path.exists('results'):
         os.makedirs('results')
 
-    exp_type = utils.create_file_prefix(args.positive_fraction, args.with_delta, args.fraction, args.sampler_size)
+    exp_type = utils.create_file_prefix(args.positive_fraction, args.with_delta, args.fraction, args.sampler_size, args.pop)
 
     send_strategy = SendStrategy.SendDelta() if args.with_delta else SendStrategy.SendVector()
 
