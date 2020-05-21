@@ -86,9 +86,10 @@ def main(args):
                     server.train_model(clients)
 
                     if args.pop == 3:
-                        if (i + 1) % (splitting_epochs[-1] * round_modifier) == 0:
-                            splitting_epochs.pop()
-                            server.new_step()
+                        if len(splitting_epochs) > 0:
+                            if (i + 1) % (splitting_epochs[-1] * round_modifier) == 0:
+                                splitting_epochs.pop()
+                                server.new_step()
                     else:
                         if (i + 1) % (args.step_every * round_modifier) == 0:
                             server.new_step()
