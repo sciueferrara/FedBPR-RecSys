@@ -46,6 +46,8 @@ def main(args):
         print('{} interactions considered for training'.format(train_interactions_size))
 
         if args.create_dataset_files:
+            if not os.path.exists('sets'):
+                os.makedirs('sets')
             with open('sets/{}/trainingset.tsv'.format(dataset), 'w') as out:
                 for u, train_list in enumerate(train_user_lists):
                     for i in train_list:
