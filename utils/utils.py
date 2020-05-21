@@ -87,4 +87,4 @@ def create_file_prefix(positive_fraction, with_delta, fraction, sampler_size, po
 
 def get_popularity(train_user_list):
     all_rated = [e for i in train_user_list for e in i]
-    return sorted(set(all_rated), key=all_rated.count, reverse=True)
+    return sorted(set(all_rated), key=all_rated.count)
