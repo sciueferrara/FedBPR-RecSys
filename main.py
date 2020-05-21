@@ -45,6 +45,17 @@ def main(args):
         train_interactions_size = sum([len(user_list) for user_list in train_user_lists])
         print('{} interactions considered for training'.format(train_interactions_size))
 
+        if args.create_dataset_files:
+            with open('sets/{}/trainingset.tsv'.format(dataset), 'w') as out:
+                for u, train_list in enumerate(train_user_lists):
+                    for i in train_list:
+                        out.write(str(u) + '\t' + str(i) + '\t' + str(1) + '\n')
+            with open('sets/{}/testset.tsv'.format(dataset), 'w') as out:
+                for u, test_list in enumerate(test_user_lists):
+                    for i in test_list:
+                        out.write(str(u) + '\t' + str(i) + '\t' + str(1) + '\n')
+            continue
+
         if args.pop:
             most_popular_items = (args.pop, utils.get_popularity(train_user_lists))
         else:
@@ -119,5 +130,6 @@ if __name__ == '__main__':
     parser.add_argument('--mp', action='store_true', help='Use if you want to use multiprocessing (if fraction > 0)')
     parser.add_argument('-pop', '--pop', type=int, help='Select the popularity variant (1, 2)')
     parser.add_argument('--step_every', type=int)
+    parser.add_argument('--create_dataset_files',  action='store_true')
     parsed_args = parser.parse_args()
     main(parsed_args)
