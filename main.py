@@ -48,11 +48,11 @@ def main(args):
         if args.create_dataset_files:
             if not os.path.exists('sets'):
                 os.makedirs('sets')
-            with open('sets/{}/trainingset.tsv'.format(dataset), 'w') as out:
+            with open('sets/{}_trainingset.tsv'.format(dataset), 'w') as out:
                 for u, train_list in enumerate(train_user_lists):
                     for i in train_list:
                         out.write(str(u) + '\t' + str(i) + '\t' + str(1) + '\n')
-            with open('sets/{}/testset.tsv'.format(dataset), 'w') as out:
+            with open('sets/{}_testset.tsv'.format(dataset), 'w') as out:
                 for u, test_list in enumerate(test_user_lists):
                     for i in test_list:
                         out.write(str(u) + '\t' + str(i) + '\t' + str(1) + '\n')
