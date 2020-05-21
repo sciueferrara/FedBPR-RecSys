@@ -50,6 +50,9 @@ def main(args):
         else:
             most_popular_items = None
 
+        if args.pop == 3:
+            splitting_epochs = [int(args.n_epochs/2), int(3*args.n_epochs/4), int(7*args.n_epochs/8)]
+
 
         # Set parameters based on arguments
         if args.fraction == 0:
@@ -82,8 +85,12 @@ def main(args):
                     bar.next()
                     server.train_model(clients)
 
-                    if (i + 1) % (args.step_every * round_modifier) == 0:
-                        server.new_step()
+                    if args.pop == 3:
+                        if (i + 1) % (splitting_epochs[0] * round_modifier) == 0:
+                            server.new_step((i + 1) % (args.step_every * round_modifier), args.n_epochs)
+                    else:
+                        if (i + 1) % (args.step_every * round_modifier) == 0:
+                            server.new_step((i + 1) % (args.step_every * round_modifier), args.n_epochs)
 
                     # Evaluation
                     if ((i + 1) % (args.eval_every * round_modifier)) == 0:
