@@ -87,10 +87,11 @@ def main(args):
 
                     if args.pop == 3:
                         if (i + 1) % (splitting_epochs[0] * round_modifier) == 0:
-                            server.new_step((i + 1) % (args.step_every * round_modifier), args.n_epochs)
+                            splitting_epochs.pop()
+                            server.new_step()
                     else:
                         if (i + 1) % (args.step_every * round_modifier) == 0:
-                            server.new_step((i + 1) % (args.step_every * round_modifier), args.n_epochs)
+                            server.new_step()
 
                     # Evaluation
                     if ((i + 1) % (args.eval_every * round_modifier)) == 0:

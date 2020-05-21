@@ -64,7 +64,7 @@ class Server:
             self._send_strategy.delete_item_vectors(clients, i)
         return predictions
 
-    def new_step(self, epoch, tot_epochs):
+    def new_step(self):
         if self.step < 10:
             self.step += 1
             print("Portion changed")
