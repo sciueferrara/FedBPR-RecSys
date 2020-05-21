@@ -51,8 +51,8 @@ def main(args):
             most_popular_items = None
 
         if args.pop == 3:
-            splitting_epochs = [int(7*args.n_epochs/8), int(3*args.n_epochs/4), int(args.n_epochs/2)]
-
+            #splitting_epochs = [int(7*args.n_epochs/8), int(3*args.n_epochs/4), int(args.n_epochs/2)]
+            splitting_epochs = [int(args.n_epochs/2),  int(3*args.n_epochs/4), int(7*args.n_epochs/8)]
 
         # Set parameters based on arguments
         if args.fraction == 0:

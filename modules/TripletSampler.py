@@ -20,11 +20,11 @@ class TripletSampler:
         elif most_popular_items[0] == 3:
             s = 0
             if step == 0:
-                e = int(0.25 * len(most_popular_items[1]))
+                e = int(0.1 * len(most_popular_items[1]))
             elif step == 1:
-                e = int(0.5 * len(most_popular_items[1]))
+                e = int(0.2 * len(most_popular_items[1]))
             elif step == 2:
-                e = int(0.75 * len(most_popular_items[1]))
+                e = int(0.5 * len(most_popular_items[1]))
             elif step == 3:
                 e = len(most_popular_items[1])
         self.selection_list = list(set(self.train_user_list) & set(most_popular_items[1][s:e]))
