@@ -32,19 +32,12 @@ class TripletSampler:
 
     def sample_user_triples(self):
         i = np.random.choice(self.train_user_list)
-        #for _ in range(self.sampler_size):
         for _ in range(60):
-            #if self.selection_list:
-            #    i = np.random.choice(self.selection_list)
-            #else:
-            #i = np.random.choice(self.train_user_list)
+            j = np.random.randint(self.item_size)
             if self.selection_list:
-                j = np.random.choice(self.selection_list)
+                while j not in self.selection_list or j in self.train_user_list:
+                    j = np.random.randint(self.item_size)
             else:
-                j = np.random.randint(self.item_size)
-            while j in self.train_user_list:
-                if self.selection_list:
-                    j = np.random.choice(self.selection_list)
-                else:
+                while j in self.train_user_list:
                     j = np.random.randint(self.item_size)
             yield i, j
