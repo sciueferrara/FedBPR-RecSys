@@ -43,5 +43,8 @@ class TripletSampler:
             else:
                 j = np.random.randint(self.item_size)
             while j in self.train_user_list:
-                j = np.random.choice(self.selection_list)
+                if self.selection_list:
+                    j = np.random.choice(self.selection_list)
+                else:
+                    j = np.random.randint(self.item_size)
             yield i, j
