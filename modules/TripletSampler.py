@@ -37,7 +37,6 @@ class TripletSampler:
             #else:
             i = np.random.choice(self.train_user_list)
             if self.selection_list:
-                print('qui')
                 j = np.random.choice(self.selection_list)
             else:
                 j = np.random.randint(self.item_size)
