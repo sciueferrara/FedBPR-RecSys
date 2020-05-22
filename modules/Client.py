@@ -82,16 +82,18 @@ class Client:
 
         sample = self.train_set.sample_user_triples()
         i, j = sample.__next__()
-        x_i = self.model.predict_one(i)
+        #x_i = self.model.predict_one(i)
         x_j = self.model.predict_one(j)
-        x_ij = x_i - x_j
+        #x_ij = x_i - x_j
+        x_ij = - x_j
         d_loss = 1 / (1 + np.exp(x_ij))
 
         bj_new = (-d_loss - bias_reg * self.model.item_bias[j])
         wu = self.model.user_vec.copy()
 
         hj_new = (d_loss * (-wu) - negative_item_reg * self.model.item_vecs[j])
-        self.model.user_vec += lr * (d_loss * (self.model.item_vecs[i] - self.model.item_vecs[j]) - user_reg * wu)
+        #self.model.user_vec += lr * (d_loss * (self.model.item_vecs[i] - self.model.item_vecs[j]) - user_reg * wu)
+        self.model.user_vec += lr * (d_loss * (- self.model.item_vecs[j]) - user_reg * wu)
 
         resulting_dic[j] = np.add(resulting_dic[j], hj_new)
         resulting_bias[j] += bj_new
