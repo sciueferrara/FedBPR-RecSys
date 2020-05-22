@@ -92,13 +92,13 @@ class Client:
         hj_new = (d_loss * (-wu) - negative_item_reg * self.model.item_vecs[j])
         self.model.user_vec += lr * (d_loss * (self.model.item_vecs[i] - self.model.item_vecs[j]) - user_reg * wu)
 
-        resulting_dic[j] += hj_new
+        resulting_dic[j] = np.add(resulting_dic[j], hj_new)
         resulting_bias[j] += bj_new
 
         for i, j in sample:
             bj_new = (-d_loss - bias_reg * self.model.item_bias[j])
             hj_new = (d_loss * (-wu) - negative_item_reg * self.model.item_vecs[j])
-            resulting_dic[j] += hj_new
+            resulting_dic[j] = np.add(resulting_dic[j], hj_new)
             resulting_bias[j] += bj_new
 
         return resulting_dic, resulting_bias
