@@ -33,7 +33,7 @@ class TripletSampler:
     def sample_user_triples(self):
         i = np.random.choice(self.train_user_list)
         #for _ in range(self.sampler_size):
-        for _ in range(1700):
+        for _ in range(self.sampler_size):
             #if self.selection_list:
             #    i = np.random.choice(self.selection_list)
             #else:
