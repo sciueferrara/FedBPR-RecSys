@@ -98,9 +98,9 @@ class Client:
 
         d_wu = d_loss * (-wu)
         j_samples = [j for _, j in sample]
-        map(lambda j: resulting_dic.update({j: np.add(resulting_dic[j], d_wu - negative_item_reg * self.model.item_vecs[j])}),
-            j_samples)
-        map(lambda j: resulting_bias.update({j: resulting_bias[j] - d_loss - bias_reg * self.model.item_bias[j]}), j_samples)
+        list(map(lambda j: resulting_dic.update({j: np.add(resulting_dic[j], d_wu - negative_item_reg * self.model.item_vecs[j])}),
+            j_samples))
+        list(map(lambda j: resulting_bias.update({j: resulting_bias[j] - d_loss - bias_reg * self.model.item_bias[j]}), j_samples))
         # for i, j in sample:
         #     bj_new = (-d_loss - bias_reg * self.model.item_bias[j])
         #     hj_new = (d_loss * (-wu) - negative_item_reg * self.model.item_vecs[j])
