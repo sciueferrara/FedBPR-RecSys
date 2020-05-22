@@ -98,14 +98,15 @@ def main(args):
                     bar.next()
                     server.train_model(clients)
 
-                    if args.pop == 3:
-                        if len(splitting_epochs) > 0:
-                            if (i + 1) % (splitting_epochs[-1] * round_modifier) == 0:
-                                splitting_epochs.pop()
+                    if args.pop:
+                        if args.pop == 3:
+                            if len(splitting_epochs) > 0:
+                                if (i + 1) % (splitting_epochs[-1] * round_modifier) == 0:
+                                    splitting_epochs.pop()
+                                    server.new_step()
+                        else:
+                            if (i + 1) % (args.step_every * round_modifier) == 0:
                                 server.new_step()
-                    else:
-                        if (i + 1) % (args.step_every * round_modifier) == 0:
-                            server.new_step()
 
                     # Evaluation
                     if ((i + 1) % (args.eval_every * round_modifier)) == 0:
