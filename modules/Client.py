@@ -73,8 +73,9 @@ class Client:
         user_reg = lr / 20
         positive_item_reg = lr / 20
         negative_item_reg = lr / 200
-        resulting_dic = defaultdict(lambda: np.array([0 for _ in range(len(self.model.user_vec))]))
+        resulting_dic = defaultdict(lambda: np.zeros(len(self.model.user_vec)))
         resulting_bias = defaultdict(float)
+
 
         if most_popular_items:
             self.train_set.set_selection_list(most_popular_items, step)
@@ -95,10 +96,15 @@ class Client:
         resulting_dic[j] = np.add(resulting_dic[j], hj_new)
         resulting_bias[j] += bj_new
 
-        for i, j in sample:
-            bj_new = (-d_loss - bias_reg * self.model.item_bias[j])
-            hj_new = (d_loss * (-wu) - negative_item_reg * self.model.item_vecs[j])
-            resulting_dic[j] = np.add(resulting_dic[j], hj_new)
-            resulting_bias[j] += bj_new
+        d_wu = d_loss * (-wu)
+        j_samples = [j for _, j in sample]
+        map(lambda j: resulting_dic.update({j: np.add(resulting_dic[j], d_wu - negative_item_reg * self.model.item_vecs[j])}),
+            j_samples)
+        map(lambda j: resulting_bias.update({j: resulting_bias[j] - d_loss - bias_reg * self.model.item_bias[j]}), j_samples)
+        # for i, j in sample:
+        #     bj_new = (-d_loss - bias_reg * self.model.item_bias[j])
+        #     hj_new = (d_loss * (-wu) - negative_item_reg * self.model.item_vecs[j])
+        #     resulting_dic[j] = np.add(resulting_dic[j], hj_new)
+        #     resulting_bias[j] += bj_new
 
         return resulting_dic, resulting_bias
