@@ -31,11 +31,13 @@ class TripletSampler:
         self.selection_list = most_popular_items[1][s:e]
 
     def sample_user_triples(self):
-        for _ in range(self.sampler_size):
+        i = np.random.choice(self.train_user_list)
+        #for _ in range(self.sampler_size):
+        for _ in range(1700):
             #if self.selection_list:
             #    i = np.random.choice(self.selection_list)
             #else:
-            i = np.random.choice(self.train_user_list)
+            #i = np.random.choice(self.train_user_list)
             if self.selection_list:
                 j = np.random.choice(self.selection_list)
             else:
