@@ -27,15 +27,18 @@ class TripletSampler:
                 e = int(0.9 * len(most_popular_items[1]))
             elif step == 3:
                 e = len(most_popular_items[1])
-        self.selection_list = list(set(self.train_user_list) & set(most_popular_items[1][s:e]))
+        # self.selection_list = list(set(self.train_user_list) & set(most_popular_items[1][s:e]))
+        self.selection_list = most_popular_items[1][s:e]
 
     def sample_user_triples(self):
         for _ in range(self.sampler_size):
+            #if self.selection_list:
+            #    i = np.random.choice(self.selection_list)
+            #else:
+            i = np.random.choice(self.train_user_list)
             if self.selection_list:
-                i = np.random.choice(self.selection_list)
-            else:
-                i = np.random.choice(self.train_user_list)
-            j = np.random.randint(self.item_size)
+                j = np.random.choice(self.selection_list)
+                #j = np.random.randint(self.item_size)
             while j in self.train_user_list:
-                j = np.random.randint(self.item_size)
+                j = np.random.choice(self.selection_list)
             yield i, j
