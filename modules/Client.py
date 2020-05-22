@@ -73,7 +73,7 @@ class Client:
         user_reg = lr / 20
         positive_item_reg = lr / 20
         negative_item_reg = lr / 200
-        resulting_dic = defaultdict(lambda: np.ndarray([0 for _ in range(len(self.model.user_vec))]))
+        resulting_dic = defaultdict(lambda: np.array([0 for _ in range(len(self.model.user_vec))]))
         resulting_bias = defaultdict(float)
 
         if most_popular_items:
