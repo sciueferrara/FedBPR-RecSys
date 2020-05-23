@@ -68,7 +68,7 @@ def main(args):
         print('{} interactions considered for training'.format(train_interactions_size))
 
         if args.pop:
-            print("Analyzing popularity...", end="")
+            print("Analyzing popularity...")
             most_popular_items = (args.pop, utils.get_popularity(train_user_lists))
             print("Done.")
         else:
