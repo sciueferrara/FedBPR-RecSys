@@ -34,7 +34,7 @@ class TripletSampler:
         self.set_of_selection_list = set(most_popular_items[1][s:e])
 
     def sample_user_triples(self):
-        i = np.random.choice(self.train_user_list)
+        #i = np.random.choice(self.train_user_list)
         for _ in range(self.sampler_size):
             j = np.random.randint(self.item_size)
             if self.selection_list:
@@ -43,4 +43,4 @@ class TripletSampler:
             else:
                 while j in self.set_of_train_list:
                     j = np.random.randint(self.item_size)
-            yield i, j
+            yield j

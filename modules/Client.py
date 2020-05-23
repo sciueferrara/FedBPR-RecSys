@@ -68,7 +68,7 @@ class Client:
 
 
 
-    def train(self, lr, positive_fraction, most_popular_items, step):
+    def train_bak(self, lr, positive_fraction, most_popular_items, step):
         bias_reg = 0
         user_reg = lr / 20
         positive_item_reg = lr / 20
@@ -81,6 +81,9 @@ class Client:
             self.train_set.set_selection_list(most_popular_items, step)
 
         sample = self.train_set.sample_user_triples()
+
+
+
         i, j = sample.__next__()
         #x_i = self.model.predict_one(i)
         x_j = self.model.predict_one(j)
@@ -110,3 +113,30 @@ class Client:
         #     resulting_bias[j] += bj_new
 
         return resulting_dic, resulting_bias
+
+    def train(self, lr, positive_fraction, most_popular_items, step):
+        bias_reg = 0
+        user_reg = lr / 20
+        positive_item_reg = lr / 20
+        negative_item_reg = lr / 200
+        resulting_dic = defaultdict(lambda: np.zeros(len(self.model.user_vec)))
+        resulting_bias = defaultdict(float)
+
+        if most_popular_items:
+            self.train_set.set_selection_list(most_popular_items, step)
+
+        sample = self.train_set.sample_user_triples()
+
+        def operation(j):
+            wu = self.model.user_vec.copy()
+            x_j = self.model.predict_one(j)
+            d_loss = 1 / (1 + np.exp(-x_j))
+            self.model.user_vec += lr * (d_loss * (- self.model.item_vecs[j]) - user_reg * wu)
+            d_wu = d_loss * (-wu)
+            np.add(resulting_dic[j], d_wu - negative_item_reg * self.model.item_vecs[j])
+            resulting_bias.update({j: resulting_bias[j] - d_loss - bias_reg * self.model.item_bias[j]})
+
+        deque(map(lambda j: operation(j), sample), maxlen=0)
+
+        return resulting_dic, resulting_bias
+
