@@ -133,7 +133,7 @@ class Client:
             d_loss = 1 / (1 + np.exp(-x_j))
             self.model.user_vec += lr * (d_loss * (- self.model.item_vecs[j]) - user_reg * wu)
             d_wu = d_loss * (-wu)
-            np.add(resulting_dic[j], d_wu - negative_item_reg * self.model.item_vecs[j])
+            resulting_dic[j] = np.add(resulting_dic[j], d_wu - negative_item_reg * self.model.item_vecs[j])
             resulting_bias.update({j: resulting_bias[j] - d_loss - bias_reg * self.model.item_bias[j]})
 
         deque(map(lambda j: operation(j), sample), maxlen=0)
