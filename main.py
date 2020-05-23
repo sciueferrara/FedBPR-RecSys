@@ -39,7 +39,7 @@ def main(args):
             user_size = len(df['user_id'].unique())
             item_size = len(df['item_id'].unique())
             print('Found {} users and {} items'.format(user_size, item_size))
-            total_user_lists = utils.create_user_lists(df, user_size, 'utc')
+            total_user_lists = utils.create_user_lists(df, user_size, 4)
             train_user_lists, validation_user_lists, test_user_lists = utils.split_train_test(total_user_lists,
                                                                                     test_size=0.2,
                                                                                     validation_size=args.validation_size)
@@ -63,7 +63,7 @@ def main(args):
         user_size = len(df['user_id'].unique())
         item_size = len(df['item_id'].unique())
         print('Found {} users and {} items'.format(user_size, item_size))
-        train_user_lists = utils.create_user_lists(df, user_size, 'rating')
+        train_user_lists = utils.create_user_lists(df, user_size, 3)
         train_interactions_size = sum([len(user_list) for user_list in train_user_lists])
 
         if args.pop:

@@ -39,10 +39,10 @@ def convert_unique_idx(df, column_name):
     return df, reverse_dict
 
 
-def create_user_lists(df, user_size, column_name):
+def create_user_lists(df, user_size, column_idx):
     user_list = [dict() for _ in range(user_size)]
     for row in df.itertuples():
-        user_list[row.user_id][row.item_id] = row[column_name]
+        user_list[row.user_id][row.item_id] = row[column_idx]
     return user_list
 
 
