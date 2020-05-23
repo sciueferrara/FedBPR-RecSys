@@ -4,7 +4,7 @@ from collections import defaultdict, deque
 
 
 class Client:
-    def __init__(self, client_id, model, train, train_user_list, validation_user_list, test_user_list, sampler_size):
+    def __init__(self, client_id, model, train, train_user_list, sampler_size):
         self.id = client_id
         self.model = model
         self.train_set = train
