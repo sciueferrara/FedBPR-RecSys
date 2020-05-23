@@ -28,24 +28,24 @@ def main(args):
         if not os.path.exists('results/{}'.format(dataset)):
             os.makedirs('results/{}'.format(dataset))
 
-        # Read the dataset and prepare it for training, validation and test
-        names = ['user_id', 'item_id', 'rating', 'utc']
-        df = pd.read_csv('datasets/' + dataset + '.tsv', sep='\t', dtype={'rating': 'float64', 'utc': 'int64'}, header=0, names=names)
-        df = df.groupby('user_id').filter(lambda x: len(x) >= 20)
-        print(df.shape[0], 'interactions read')
-        df = utils.convert_unique_idx(df, 'user_id')
-        df = utils.convert_unique_idx(df, 'item_id')
-        user_size = len(df['user_id'].unique())
-        item_size = len(df['item_id'].unique())
-        print('Found {} users and {} items'.format(user_size, item_size))
-        total_user_lists = utils.create_user_lists(df, user_size)
-        train_user_lists, validation_user_lists, test_user_lists = utils.split_train_test(total_user_lists,
-                                                                                test_size=0.2,
-                                                                                validation_size=args.validation_size)
-        train_interactions_size = sum([len(user_list) for user_list in train_user_lists])
-        print('{} interactions considered for training'.format(train_interactions_size))
-
         if args.create_dataset_files:
+            # Read the dataset and prepare it for training, validation and test
+            names = ['user_id', 'item_id', 'rating', 'utc']
+            df = pd.read_csv('original_datasets/' + dataset + '.tsv', sep='\t', dtype={'rating': 'float64', 'utc': 'int64'}, header=0, names=names)
+            df = df.groupby('user_id').filter(lambda x: len(x) >= 20)
+            print(df.shape[0], 'interactions read')
+            df, _ = utils.convert_unique_idx(df, 'user_id')
+            df, _ = utils.convert_unique_idx(df, 'item_id')
+            user_size = len(df['user_id'].unique())
+            item_size = len(df['item_id'].unique())
+            print('Found {} users and {} items'.format(user_size, item_size))
+            total_user_lists = utils.create_user_lists(df, user_size, 'utc')
+            train_user_lists, validation_user_lists, test_user_lists = utils.split_train_test(total_user_lists,
+                                                                                    test_size=0.2,
+                                                                                    validation_size=args.validation_size)
+            train_interactions_size = sum([len(user_list) for user_list in train_user_lists])
+            #print('{} interactions considered for training'.format(train_interactions_size))
+
             if not os.path.exists('sets'):
                 os.makedirs('sets')
             with open('sets/{}_trainingset.tsv'.format(dataset), 'w') as out:
@@ -57,6 +57,14 @@ def main(args):
                     for i in test_list:
                         out.write(str(u) + '\t' + str(i) + '\t' + str(1) + '\n')
             continue
+
+        df = pd.read_csv('sets/{}_trainingset.tsv'.format(dataset), sep='\t', names=['user_id', 'item_id', 'rating'])
+        df, reverse_dict = utils.convert_unique_idx(df, 'item_id')
+        user_size = len(df['user_id'].unique())
+        item_size = len(df['item_id'].unique())
+        print('Found {} users and {} items'.format(user_size, item_size))
+        train_user_lists = utils.create_user_lists(df, user_size, 'rating')
+        train_interactions_size = sum([len(user_list) for user_list in train_user_lists])
 
         if args.pop:
             most_popular_items = (args.pop, utils.get_popularity(train_user_lists))
@@ -88,8 +96,7 @@ def main(args):
                 # Create server and clients
                 server_model = ServerModel(item_size, n_factors)
                 server = Server(server_model, lr, args.fraction, args.positive_fraction, args.mp, send_strategy, most_popular_items)
-                clients = [Client(u, ClientModel(n_factors), triplet_samplers[u], train_user_lists[u],
-                                  validation_user_lists[u], test_user_lists[u], sampler_size) for u in range(user_size)]
+                clients = [Client(u, ClientModel(n_factors), triplet_samplers[u], train_user_lists[u], sampler_size) for u in range(user_size)]
 
                 # Start training
                 for i in range(args.n_epochs * round_modifier):
@@ -115,7 +122,7 @@ def main(args):
                         with open('results/{}/{}{}.tsv'.format(dataset, exp_type, exp_setting_3), 'w') as out:
                             for u in range(len(results)):
                                 for e, p in results[u].items():
-                                    out.write(str(u) + '\t' + str(e) + '\t' + str(p) + '\n')
+                                    out.write(str(u) + '\t' + str(reverse_dict[e]) + '\t' + str(p) + '\n')
 
 
 if __name__ == '__main__':
