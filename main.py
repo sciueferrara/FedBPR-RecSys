@@ -139,7 +139,7 @@ def main(args):
 
                 with open('counters/{}/{}.tsv'.format(dataset, exp_type), 'w') as out:
                     for k, v in final_dict.items():
-                            out.write(str(k) + '\t' + str(v) + '\n')
+                            out.write(str(reverse_dict[k]) + '\t' + str(v) + '\n')
 
 
 
