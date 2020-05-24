@@ -15,6 +15,7 @@ class Server:
         self.positive_fraction = positive_fraction
         self.most_popular_items = most_popular_items
         self.step = 0
+        self.big_list = []
 
     def select_clients(self, clients, fraction=0.1):
         if fraction == 0:
@@ -29,6 +30,9 @@ class Server:
             self.model.item_vecs[k] += self.lr * v
         for k, v in resulting_bias.items():
             self.model.item_bias[k] += self.lr * v
+        for k, _ in resulting_dic.items():
+            self.big_list.append(k)
+
 
     def train_model(self, clients):
         item_vecs_bak, item_bias_bak = self._send_strategy.backup_item_vectors(self.model) or (None, None)

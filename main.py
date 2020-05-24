@@ -18,6 +18,9 @@ def main(args):
     if not os.path.exists('results'):
         os.makedirs('results')
 
+    if not os.path.exists('counters'):
+        os.makedirs('counters')
+
     exp_type = utils.create_file_prefix(args.positive_fraction, args.with_delta, args.fraction, args.sampler_size, args.pop)
 
     send_strategy = SendStrategy.SendDelta() if args.with_delta else SendStrategy.SendVector()
@@ -27,6 +30,9 @@ def main(args):
 
         if not os.path.exists('results/{}'.format(dataset)):
             os.makedirs('results/{}'.format(dataset))
+
+        if not os.path.exists('counters/{}'.format(dataset)):
+            os.makedirs('counters/{}'.format(dataset))
 
         if args.create_dataset_files:
             # Read the dataset and prepare it for training, validation and test
@@ -126,6 +132,15 @@ def main(args):
                             for u in range(len(results)):
                                 for e, p in results[u].items():
                                     out.write(str(u) + '\t' + str(reverse_dict[e]) + '\t' + str(p) + '\n')
+
+                final_dict = {k: 0 for k in range(item_size)}
+                for i in server.big_list:
+                    final_dict[i] += 1
+
+                with open('counters/{}/{}.tsv'.format(dataset, exp_type), 'w') as out:
+                    for k, v in final_dict.items():
+                            out.write(str(k) + '\t' + str(v) + '\n')
+
 
 
 if __name__ == '__main__':
