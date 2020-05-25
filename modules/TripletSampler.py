@@ -22,9 +22,9 @@ class TripletSampler:
         elif most_popular_items[0] == 3:
             s = 0
             if step == 0:
-                e = int(0.7 * len(most_popular_items[1]))
+                e = int(0.5 * len(most_popular_items[1]))
             elif step == 1:
-                e = int(0.8 * len(most_popular_items[1]))
+                e = int(0.7 * len(most_popular_items[1]))
             elif step == 2:
                 e = int(0.9 * len(most_popular_items[1]))
             elif step == 3:
