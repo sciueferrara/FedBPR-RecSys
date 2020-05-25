@@ -116,7 +116,8 @@ class Client:
         bias_reg = 0
         user_reg = lr / 20
         positive_item_reg = lr / 20
-        negative_item_reg = (lr / 200) / 1700
+        negative_item_reg = lr / 20
+        #negative_item_reg = (lr / 200) / 1700
         resulting_dic = defaultdict(lambda: np.zeros(len(self.model.user_vec)))
         resulting_bias = defaultdict(float)
 
