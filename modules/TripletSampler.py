@@ -35,7 +35,7 @@ class TripletSampler:
 
     def sample_user_triples(self):
         #i = np.random.choice(self.train_user_list)
-        for _ in range(self.sampler_size):
+        for _ in range(1700):
             j = np.random.randint(self.item_size)
             if self.selection_list:
                 while j not in self.set_of_selection_list or j in self.set_of_train_list:
